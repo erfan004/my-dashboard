@@ -13,8 +13,6 @@ export const Salary = () => {
 
   const [mountOfSalary, setmountOfSalary] = useState(0);
 
-  // const [curTimeStamp , setCurTimeStamp] = useState(0)
-
   const [salaryHelperText, setSalaryHelperText] = useState("");
 
   const [salaryError, setSalaryError] = useState(false);
@@ -124,6 +122,8 @@ export const Salary = () => {
  )
   /* end of mutations */
 
+  /*start of api requests*/
+
   const fetchSalary = async () => {
     try {
       const res = await axios.get(
@@ -180,6 +180,9 @@ export const Salary = () => {
       console.log(err);
     }
   }
+  /*end of api requests*/
+
+  /*start of queries*/
 
   const salaryQuery = useQuery({
     queryKey: ["salary"],
@@ -198,8 +201,9 @@ export const Salary = () => {
   }) 
 
 
+  /*end of queries*/
 
-
+ /*start of functions*/
 
   const addSalaryHandler = (e) => {
     e.preventDefault();
@@ -224,6 +228,10 @@ export const Salary = () => {
     }
   };
   
+  /*end of functions*/
+
+  /*start of useEffects*/
+
 useEffect(()=>{
   const curTimeStamp = Math.trunc(Date.now() / 1000)
   if(timeStamp > 0 && timeStamp + 2629743 <= curTimeStamp){
@@ -231,7 +239,12 @@ useEffect(()=>{
     deleteSalary.mutate()
     deleteCosts.mutate()
   }
-} , [])
+  else if (finalCosts > 0 && finalCosts == payment ){
+    deleteTimeStamp.mutate()
+    deleteSalary.mutate()
+    deleteCosts.mutate()
+  }
+} , [ finalCosts , timeStamp])
 
   useEffect(()=>{
     if(arrayCostsQuery.isSuccess){
@@ -241,7 +254,7 @@ useEffect(()=>{
     }
   } , [arrayCostsQuery.isFetching , costsMutation.isSuccess ])
 
-
+  /*end of useEffects*/
   
   let salaryEl;
   
