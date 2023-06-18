@@ -95,6 +95,7 @@ export const Salary = () => {
       );
       const salary = res.data;
       if (salary) {
+        setSalaryId(Object.keys(salary))
         const salaryMount = Object.values(salary);
         setPayment(salaryMount[0]);
         return salaryMount;
@@ -106,7 +107,7 @@ export const Salary = () => {
       console.log(err);
     }
   };
-
+  
   const fetchTimeStamp = async () => {
     try {
       const res = await axios.get(
@@ -178,15 +179,12 @@ export const Salary = () => {
   };
   const addCosts = (e) => {
     e.preventDefault()
-    if(costs == 0 || costs.trim() == '' || costs > payment){
+    if(costs == 0 || costs.trim() == '' || costs > payment - finalCosts){
       setCostsError(true)
-      console.log(payment);
     }
     else { 
       setCostsError(false)
       costsMutation.mutate()
-      salaryMutation.mutate(payment - finalCosts)
-      console.log(payment);
     }
   };
   
