@@ -13,6 +13,8 @@ export const Salary = () => {
 
   const [mountOfSalary, setmountOfSalary] = useState(0);
 
+  // const [curTimeStamp , setCurTimeStamp] = useState(0)
+
   const [salaryHelperText, setSalaryHelperText] = useState("");
 
   const [salaryError, setSalaryError] = useState(false);
@@ -28,6 +30,7 @@ export const Salary = () => {
   const [arrayCosts , setArrayCosts] = useState([])
 
   const [finalCosts  , setFinalCosts] = useState(0)
+
 
   /* end of states */
 
@@ -65,7 +68,7 @@ export const Salary = () => {
     () =>
       axios.post(
         "https://dashboard-e6a2f-default-rtdb.firebaseio.com/timeStamp.json",
-        Date.now()
+        Math.trunc(Date.now() / 1000)
       ),
     {
       onSuccess: (res) => {
@@ -86,6 +89,39 @@ export const Salary = () => {
     }
   )
 
+ const deleteSalary = useMutation(
+  ()=> 
+  axios.delete('https://dashboard-e6a2f-default-rtdb.firebaseio.com/salary.json') , 
+  {
+    onSuccess : (res)=>{
+      console.log(res);
+      queryClient.invalidateQueries(['salary'])
+    }
+  }
+ ) 
+ 
+ const deleteTimeStamp = useMutation(
+  ()=> 
+  axios.delete('https://dashboard-e6a2f-default-rtdb.firebaseio.com/timeStamp.json') , 
+  {
+    onSuccess : (res)=>{
+      console.log(res);
+      queryClient.invalidateQueries(['timeStamp'])
+    } 
+  }
+ ) 
+
+ const deleteCosts = useMutation(
+  ()=>
+  axios.delete('https://dashboard-e6a2f-default-rtdb.firebaseio.com/costs.json') 
+  ,
+  {
+    onSuccess: (res)=>{
+      console.log(res);
+      queryClient.invalidateQueries(['arrayCosts'])
+    }
+  }
+ )
   /* end of mutations */
 
   const fetchSalary = async () => {
@@ -95,7 +131,6 @@ export const Salary = () => {
       );
       const salary = res.data;
       if (salary) {
-        setSalaryId(Object.keys(salary))
         const salaryMount = Object.values(salary);
         setPayment(salaryMount[0]);
         return salaryMount;
@@ -154,6 +189,7 @@ export const Salary = () => {
   const timeStampQuery = useQuery({
     queryKey: ["timeStamp"],
     queryFn: () => fetchTimeStamp(),
+    
   });
 
   const arrayCostsQuery = useQuery({
@@ -188,24 +224,31 @@ export const Salary = () => {
     }
   };
   
+useEffect(()=>{
+  const curTimeStamp = Math.trunc(Date.now() / 1000)
+  if(timeStamp > 0 && timeStamp + 2629743 <= curTimeStamp){
+    deleteTimeStamp.mutate()
+    deleteSalary.mutate()
+    deleteCosts.mutate()
+  }
+} , [])
 
   useEffect(()=>{
     if(arrayCostsQuery.isSuccess){
       const initialVal = 0
       const sumVal = arrayCosts.reduce((acc , cur)=> acc + cur , initialVal)
       setFinalCosts(sumVal)
-      console.log(sumVal);
     }
-  } , [arrayCostsQuery.fetchStatus == 'fetching' , costsMutation.isSuccess ])
+  } , [arrayCostsQuery.isFetching , costsMutation.isSuccess ])
 
 
+  
   let salaryEl;
-
+  
   if (salaryQuery.isFetching) {
     salaryEl = <Typography variant="h2">data is loading ...</Typography>;
   } 
-
-
+  
   else if (payment > 0) {
     salaryEl = (
       <Grid   display={'flex'} container direction={'column'} spacing={3} justifyContent={'center'} alignItems={'center'}>
@@ -232,15 +275,12 @@ export const Salary = () => {
         </Grid>
       </Grid>
     );
-    
-
   } 
   else if (salaryQuery.isError) {
     salaryEl = <Typography>fetching data has been failed</Typography>;
   } 
-
-
-  else {
+  
+  else if(payment ==0) {
     salaryEl = (
       <form onSubmit={addSalaryHandler}>
         <TextField
