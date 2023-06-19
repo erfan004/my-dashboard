@@ -22,8 +22,8 @@ const useStyles = makeStyles({
     backgroundColor: "#252525",
     width: "100%",
     color: "#f5f5f5",
-    alignItems : 'center' , 
-    justifyContent : 'center' , 
+    alignItems: "center",
+    justifyContent: "center",
   },
   displayHandler: {
     display: "flex",
@@ -66,8 +66,8 @@ const MyDrawer = ({ children }) => {
           <ListItemButton
             sx={{ color: "#0288D1" }}
             onClick={() => {
-              navigate(`${item.path}`) 
-              setMobileOpen(false)
+              navigate(`${item.path}`);
+              setMobileOpen(false);
             }}
           >
             <ListItemIcon sx={{ color: "#0288D1" }}>{item.icon}</ListItemIcon>
@@ -79,76 +79,76 @@ const MyDrawer = ({ children }) => {
   );
 
   return (
-    <div className={`${classes.displayHandler} ${classes.page}`}>
+    <React.Fragment>
       <IconButton
-        color="inherit"
+        color="info"
         aria-label="open drawer"
         edge="start"
         onClick={handleDrawerToggle}
         sx={{
-          display: { sm: "block" ,  md:'none' , xs : 'block' },
-          alignItems: "start",
-          height:'20px' , 
-          position : 'fixed' , 
-          top : '-5px' , 
-          left : '0px'
+          display: { sm: "block", md: "none", xs: "block" },
+          height: "20px",
+          ml: "-10px",
+          mt: "-10px",
         }}
       >
         <MenuIcon fontSize="large" />
       </IconButton>
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true,
-        }}
-        sx={{
-          display: { xs: "block", sm: "block"  },
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: drawerWidth,
-            backgroundColor: "#191919",
-          },
-        }}
-      >
-        {listItems}
-      </Drawer>
-
-      <Drawer
-        className={classes.displayHandler}
-        sx={{
-          display: { xs: "none", sm: "none" , md:'block' },
-          width: drawerWidth,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            backgroundColor: "#191919",
-          },
-        }}
-        variant="permanent"
-        anchor="left"
-        elevation={2}
-      >
-        <div>
-          <Typography
-            variant="h4"
-            sx={{
-              textTransform: "capitalize",
-              textAlign: "center",
-              color: "#0288D1",
-            }}
-          >
-            my dashboard
-          </Typography>
+      <div className={`${classes.displayHandler} ${classes.page}`}>
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: "block", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+              backgroundColor: "#191919",
+            },
+          }}
+        >
           {listItems}
+        </Drawer>
+
+        <Drawer
+          className={classes.displayHandler}
+          sx={{
+            display: { xs: "none", sm: "none", md: "block" },
+            width: drawerWidth,
+            [`& .MuiDrawer-paper`]: {
+              width: drawerWidth,
+              backgroundColor: "#191919",
+            },
+          }}
+          variant="permanent"
+          anchor="left"
+          elevation={2}
+        >
+          <div>
+            <Typography
+              variant="h4"
+              sx={{
+                textTransform: "capitalize",
+                textAlign: "center",
+                color: "#0288D1",
+              }}
+            >
+              my dashboard
+            </Typography>
+            {listItems}
+          </div>
+        </Drawer>
+        <div>
+          <Container component={"main"} className={classes.page}>
+            {children}
+          </Container>
         </div>
-      </Drawer>
-      <div>
-        <Container component={"main"} className={classes.page}>
-          {children}
-        </Container>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 export default MyDrawer;

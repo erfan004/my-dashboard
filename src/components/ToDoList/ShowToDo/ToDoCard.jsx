@@ -7,7 +7,7 @@ import { Button, CardActions } from '@mui/material';
 
 export default function ToDoCard({item , click , arrayLength}) {
   return (
-    <Card  sx={{mt:'15px', minWidth: arrayLength<=1 ? '250px' : '' , maxWidth:'345px'  ,backgroundColor:'#000' , color:'#0289d1de' , borderRadius:'10px' , overflow : 'auto'}}>
+    <Card  sx={{mt:'15px', minWidth: arrayLength<=1 ? '250px' : '' , maxWidth:'400px'  ,backgroundColor:'#000' , color:'#0289d1de' , borderRadius:'10px' , overflow : 'auto'}}>
         <CardContent> 
           <Typography variant="h5" component="div">
             {item.title}
